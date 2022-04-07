@@ -1,0 +1,83 @@
+stages:
+  - build
+  - test
+  - release
+  - publish
+
+# must be run on the default runner (wopr tag omitted) to use docker in docker
+test-web-service:
+  services:
+    - docker:dind
+  stage: test
+  image: tiangolo/docker-with-compose:2021-09-17
+  before_script:
+    - docker-compose -f docker-compose-ci.yaml up -d
+    - apk update && apk add curl
+    - apk add build-base
+    - mkdir -p $HOME/golang
+    - mkdir -p $HOME/gopath
+    - curl http://storage.googleapis.com/golang/go1.16.9.linux-amd64.tar.gz 2>/dev/null > go1.16.9.linux-amd64.tar.gz
+    - tar -C $HOME/golang -xzf go1.16.9.linux-amd64.tar.gz
+    - export GOROOT=$HOME/golang/go
+    - export GOPATH=$HOME/gopath
+    - export PATH=$PATH:$GOROOT/bin
+    - export PATH=$PATH:$GOPATH/bin
+  script:
+    - export HOSTNAME_FROM_CI=docker:8080
+    - go test ./... -coverpkg=./... -coverprofile=cover.out
+  after_script:
+    - docker-compose -f docker-compose-ci.yaml down
+
+lint:
+  stage: test
+  tags:
+    - wopr
+  image: registry.mdcatapult.io/informatics/docker-images/ci/golang
+  script:
+    - go vet ./...
+    - golangci-lint run
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /^Setting version to.*/
+  coverage: /total:\s+\(statements\)\s+(\d+.\d+\%)/
+
+publish:
+  stage: publish
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [ "" ]
+  before_script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+  script:
+    - /kaniko/executor --context $CI_PROJECT_DIR --build-arg VERSION_HASH=$CI_COMMIT_SHORT_SHA --destination $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  except:
+    refs:
+      - master
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /^Setting version to.*/
+
+release:
+  stage: release
+  image: registry.mdcatapult.io/informatics/docker-images/ci/golang
+  script:
+    - release.sh -b -r develop
+  only:
+    - master
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /^Setting version to.*/
+
+publish-master:
+  stage: publish
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [ "" ]
+  before_script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+  script:
+    - /kaniko/executor --context $CI_PROJECT_DIR --build-arg VERSION_HASH=$CI_COMMIT_SHORT_SHA --destination $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME --destination $CI_REGISTRY_IMAGE
+  only:
+    refs:
+      - tags
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /^Setting version to.*/

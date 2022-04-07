@@ -1,0 +1,9 @@
+version: "3.6"
+services:
+  image-converter:
+    network_mode: "host"
+    volumes:
+      - "./test-images:/opt/data"
+    build:
+      context: .
+      dockerfile: Dockerfile
