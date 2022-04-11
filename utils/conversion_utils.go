@@ -5,6 +5,7 @@ import (
 	"errors"
 	"gitlab.mdcatapult.io/informatics/software-engineering/mdc-minerva-image-converter/model"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -33,14 +34,39 @@ func CreateTempMacroFile(request model.ConvertRequest, tempDir string) (*os.File
 
 func createFijiMacroString(request model.ConvertRequest) (string, error) {
 
-	filename := filepath.Base(request.InputFile)
+	requestInputFilenames := model.ConvertRequestForFijiMacro{
+		InputFile:     request.InputFile,
+		InputFilename: filepath.Base(request.InputFile),
+		InputMaskFile: request.InputMaskFile,
+		InputMaskFilename: filepath.Base(request.InputMaskFile),
+		OutputFile: request.OutputFile,
+	}
 
-	templateString := `open("{{.InputFile }}");
+	//open("/Users/michael.sweeton/src/tiff-images/2106xx Bladder TMA NIMRAD-66-mask.tiff");
+	//run("Split Channels");
+	//open("/Users/michael.sweeton/src/tiff-images/2106xx Bladder TMA NIMRAD-66.tiff");
+	//run("Split Channels");
+	//run("Merge Channels...", "c1=[2106xx Bladder TMA NIMRAD-66.tiff (red)] c2=[2106xx Bladder TMA NIMRAD-66.tiff (green)] c3=[2106xx Bladder TMA NIMRAD-66.tiff (blue)] c4=[2106xx Bladder TMA NIMRAD-66-mask.tiff (red)] c5=[2106xx Bladder TMA NIMRAD-66-mask.tiff (green)] c6=[2106xx Bladder TMA NIMRAD-66-mask.tiff (blue)] create");
+	//selectWindow("Composite");
+	//run("16-bit");
+	//saveAs("Tiff", "/Users/michael.sweeton/src/tiff-images/Composite-test.tiff");
+
+	templateString :=
+		`open("{{.InputMaskFile }}");
 		run("Split Channels");
-		run("Merge Channels...", ` + "\"c1=[" + filename + " (red)] c2=[" + filename + " (green)] c3=[" + filename + " (blue)] create\");" +
-		`
+		open("{{.InputFile}}");
+		run("Split Channels");
+		run("Merge Channels...", "c1=[{{.InputFilename}} (red)] c2={{.InputFilename}} (green)] c3=[{{.InputFilename}} (blue)] c4=[{.InputMaskFilename}} (red)] c5=[{{.InputMaskFilename}} (green)] c6=[{{.InputMaskFilename}} (blue)] create");
+		selectWindow("Composite");
 		run("16-bit");
 		saveAs("Tiff", "{{.OutputFile}}");`
+
+	//templateString := `open("{{.InputFile }}");
+	//	run("Split Channels");
+	//	run("Merge Channels...", ` + "\"c1=[" + filename + " (red)] c2=[" + filename + " (green)] c3=[" + filename + " (blue)] create\");" +
+	//	`
+	//	run("16-bit");
+	//	saveAs("Tiff", "{{.OutputFile}}");`
 
 	macroTemplate, err := template.New("_").Parse(templateString)
 
@@ -49,9 +75,11 @@ func createFijiMacroString(request model.ConvertRequest) (string, error) {
 	}
 
 	var templateBuffer bytes.Buffer
-	if err = macroTemplate.Execute(&templateBuffer, request); err != nil {
+	if err = macroTemplate.Execute(&templateBuffer, requestInputFilenames); err != nil {
 		return "", err
 	}
+
+	log.Println(templateBuffer.String())
 
 	return templateBuffer.String(), nil
 }

@@ -49,6 +49,14 @@ func convertImage(c *gin.Context) {
 		return
 	}
 
+	correctInputMaskFileType := strings.HasSuffix(convertRequest.InputMaskFile, tiffExtension)
+	if !correctInputMaskFileType {
+		c.AbortWithStatusJSON(http.StatusBadRequest,
+			gin.H{"status": "input mask file extension must be .tiff, input mask file: " + convertRequest.InputMaskFile},
+		)
+		return
+	}
+
 	correctOutputFileType := strings.HasSuffix(convertRequest.OutputFile, omeTiffExtension)
 	if !correctOutputFileType {
 		c.AbortWithStatusJSON(http.StatusBadRequest,
@@ -92,10 +100,20 @@ func convertFile(request model.ConvertRequest) (HttpStatusCode int, e error) {
 		return http.StatusInternalServerError, errors.New("error opening input file: " + request.InputFile)
 	}
 
+	if _, err := os.Stat(request.InputMaskFile); err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return http.StatusBadRequest, errors.New("mask file: " + request.InputMaskFile + " does not exist")
+		}
+
+		return http.StatusInternalServerError, errors.New("error opening input mask file: " + request.InputFile)
+	}
+
+
 	// before making the temp macro file, make a copy of the request with an output file renamed from tiff to .ome.tiff
 	// as this will be used in the macro, and later to refer to the output tiff file generated from fiji with bfconvert
 	fijiRequest := model.ConvertRequest{
 		InputFile:  request.InputFile,
+		InputMaskFile: request.InputMaskFile,
 		OutputFile: utils.StripFileExtension(request.OutputFile, ".ome.tiff") + fijiFileSuffix + tiffExtension,
 	}
 

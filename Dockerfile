@@ -17,7 +17,7 @@ USER root
 
 WORKDIR /app
 
-RUN wget https://downloads.openmicroscopy.org/latest/bio-formats5.6/artifacts/bftools.zip
+RUN wget https://downloads.openmicroscopy.org/latest/bio-formats5.7/artifacts/bftools.zip
 RUN apt-get -y update \
     && apt-get install unzip \
     && unzip bftools.zip -d /opt \
