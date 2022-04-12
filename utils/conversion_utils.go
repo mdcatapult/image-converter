@@ -5,7 +5,6 @@ import (
 	"errors"
 	"gitlab.mdcatapult.io/informatics/software-engineering/mdc-minerva-image-converter/model"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -42,14 +41,12 @@ func createFijiMacroString(request model.ConvertRequest) (string, error) {
 		OutputFile: request.OutputFile,
 	}
 
-
-
 	templateString :=
 		`open("{{.InputFile}}");
 		run("Split Channels");
 		open("{{.InputMaskFile }}");
 		run("Split Channels");
-		run("Merge Channels...", "c1=[{{.InputFilename}} (red)] c2={{.InputFilename}} (green)] c3=[{{.InputFilename}} (blue)] c4=[{{.InputMaskFilename}} (red)] c5=[{{.InputMaskFilename}} (green)] c6=[{{.InputMaskFilename}} (blue)] create");
+		run("Merge Channels...", "c1=[{{.InputFilename}} (red)] c2=[{{.InputFilename}} (green)] c3=[{{.InputFilename}} (blue)] c4=[{{.InputMaskFilename}} (red)] c5=[{{.InputMaskFilename}} (green)] c6=[{{.InputMaskFilename}} (blue)] create");
 		run("16-bit");
 		saveAs("Tiff", "{{.OutputFile}}");`
 
@@ -63,8 +60,6 @@ func createFijiMacroString(request model.ConvertRequest) (string, error) {
 	if err = macroTemplate.Execute(&templateBuffer, requestInputFilenames); err != nil {
 		return "", err
 	}
-
-	log.Println(templateBuffer.String())
 
 	return templateBuffer.String(), nil
 }
