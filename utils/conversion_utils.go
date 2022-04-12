@@ -42,13 +42,14 @@ func createFijiMacroString(request model.ConvertRequest) (string, error) {
 		OutputFile: request.OutputFile,
 	}
 
+
+
 	templateString :=
-		`open("{{.InputMaskFile }}");
+		`open("{{.InputFile}}");
 		run("Split Channels");
-		open("{{.InputFile}}");
+		open("{{.InputMaskFile }}");
 		run("Split Channels");
-		run("Merge Channels...", "c1=[{{.InputFilename}} (red)] c2={{.InputFilename}} (green)] c3=[{{.InputFilename}} (blue)] c4=[{.InputMaskFilename}} (red)] c5=[{{.InputMaskFilename}} (green)] c6=[{{.InputMaskFilename}} (blue)] create");
-		selectWindow("Composite");
+		run("Merge Channels...", "c1=[{{.InputFilename}} (red)] c2={{.InputFilename}} (green)] c3=[{{.InputFilename}} (blue)] c4=[{{.InputMaskFilename}} (red)] c5=[{{.InputMaskFilename}} (green)] c6=[{{.InputMaskFilename}} (blue)] create");
 		run("16-bit");
 		saveAs("Tiff", "{{.OutputFile}}");`
 
