@@ -42,15 +42,6 @@ func createFijiMacroString(request model.ConvertRequest) (string, error) {
 		OutputFile: request.OutputFile,
 	}
 
-	//open("/Users/michael.sweeton/src/tiff-images/2106xx Bladder TMA NIMRAD-66-mask.tiff");
-	//run("Split Channels");
-	//open("/Users/michael.sweeton/src/tiff-images/2106xx Bladder TMA NIMRAD-66.tiff");
-	//run("Split Channels");
-	//run("Merge Channels...", "c1=[2106xx Bladder TMA NIMRAD-66.tiff (red)] c2=[2106xx Bladder TMA NIMRAD-66.tiff (green)] c3=[2106xx Bladder TMA NIMRAD-66.tiff (blue)] c4=[2106xx Bladder TMA NIMRAD-66-mask.tiff (red)] c5=[2106xx Bladder TMA NIMRAD-66-mask.tiff (green)] c6=[2106xx Bladder TMA NIMRAD-66-mask.tiff (blue)] create");
-	//selectWindow("Composite");
-	//run("16-bit");
-	//saveAs("Tiff", "/Users/michael.sweeton/src/tiff-images/Composite-test.tiff");
-
 	templateString :=
 		`open("{{.InputMaskFile }}");
 		run("Split Channels");
@@ -60,13 +51,6 @@ func createFijiMacroString(request model.ConvertRequest) (string, error) {
 		selectWindow("Composite");
 		run("16-bit");
 		saveAs("Tiff", "{{.OutputFile}}");`
-
-	//templateString := `open("{{.InputFile }}");
-	//	run("Split Channels");
-	//	run("Merge Channels...", ` + "\"c1=[" + filename + " (red)] c2=[" + filename + " (green)] c3=[" + filename + " (blue)] create\");" +
-	//	`
-	//	run("16-bit");
-	//	saveAs("Tiff", "{{.OutputFile}}");`
 
 	macroTemplate, err := template.New("_").Parse(templateString)
 

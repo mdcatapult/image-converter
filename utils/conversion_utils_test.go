@@ -57,12 +57,6 @@ func TestMacroFileIsCorrect(t *testing.T) {
 
 	fileAsString := string(fileBytes)
 
-	//expectedResult := `open("some-input-directory/test.tiff");
-	//	run("Split Channels");
-	//	run("Merge Channels...", "c1=[test.tiff (red)] c2=[test.tiff (green)] c3=[test.tiff (blue)] create");
-	//	run("16-bit");
-	//	saveAs("Tiff", "some-output-directory/test.ome.tiff");`
-
 	expectedResult := `open("some-input-directory/test-mask.tiff");
 		run("Split Channels");
 		open("some-input-directory/test.tiff");
