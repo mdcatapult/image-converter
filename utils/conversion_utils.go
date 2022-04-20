@@ -33,12 +33,20 @@ func CreateTempMacroFile(request model.ConvertRequest, tempDir string) (*os.File
 
 func createFijiMacroString(request model.ConvertRequest) (string, error) {
 
-	filename := filepath.Base(request.InputFile)
+	requestInputFilenames := model.ConvertRequestForFijiMacro{
+		InputFile:     request.InputFile,
+		InputFilename: filepath.Base(request.InputFile),
+		InputMaskFile: request.InputMaskFile,
+		InputMaskFilename: filepath.Base(request.InputMaskFile),
+		OutputFile: request.OutputFile,
+	}
 
-	templateString := `open("{{.InputFile }}");
+	templateString :=
+		`open("{{.InputFile}}");
 		run("Split Channels");
-		run("Merge Channels...", ` + "\"c1=[" + filename + " (red)] c2=[" + filename + " (green)] c3=[" + filename + " (blue)] create\");" +
-		`
+		open("{{.InputMaskFile }}");
+		run("Split Channels");
+		run("Merge Channels...", "c1=[{{.InputFilename}} (red)] c2=[{{.InputFilename}} (green)] c3=[{{.InputFilename}} (blue)] c4=[{{.InputMaskFilename}} (red)] c5=[{{.InputMaskFilename}} (green)] c6=[{{.InputMaskFilename}} (blue)] create");
 		run("16-bit");
 		saveAs("Tiff", "{{.OutputFile}}");`
 
@@ -49,7 +57,7 @@ func createFijiMacroString(request model.ConvertRequest) (string, error) {
 	}
 
 	var templateBuffer bytes.Buffer
-	if err = macroTemplate.Execute(&templateBuffer, request); err != nil {
+	if err = macroTemplate.Execute(&templateBuffer, requestInputFilenames); err != nil {
 		return "", err
 	}
 

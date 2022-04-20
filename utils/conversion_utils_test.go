@@ -37,6 +37,7 @@ func TestMacroFileIsCorrect(t *testing.T) {
 
 	request := model.ConvertRequest{
 		InputFile:  "some-input-directory/test.tiff",
+		InputMaskFile: "some-input-directory/test-mask.tiff",
 		OutputFile: "some-output-directory/test.ome.tiff",
 	}
 
@@ -58,7 +59,9 @@ func TestMacroFileIsCorrect(t *testing.T) {
 
 	expectedResult := `open("some-input-directory/test.tiff");
 		run("Split Channels");
-		run("Merge Channels...", "c1=[test.tiff (red)] c2=[test.tiff (green)] c3=[test.tiff (blue)] create");
+		open("some-input-directory/test-mask.tiff");
+		run("Split Channels");
+		run("Merge Channels...", "c1=[test.tiff (red)] c2=[test.tiff (green)] c3=[test.tiff (blue)] c4=[test-mask.tiff (red)] c5=[test-mask.tiff (green)] c6=[test-mask.tiff (blue)] create");
 		run("16-bit");
 		saveAs("Tiff", "some-output-directory/test.ome.tiff");`
 
