@@ -20,6 +20,10 @@ The macro steps are as follows:
 
 Finally, another tool, `bfconvert` is used to convert from a .tiff to a .ome.tiff 
 
+##Too make a pyramid...
+```
+bftools/bfconvert -pyramid-resolutions 6 -pyramid-scale 2 pre-pyramid.tiff pyramid.ome.tiff
+```
 ## Endpoints
 
 ### `/convert`
