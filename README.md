@@ -65,7 +65,8 @@ As default the pyramid-resolutions will be set to 6 tiers and the tiers will dow
 ## Endpoints
 
 ### `/convert`
-Converts a .tiff file to an .ome.tiff file
+Converts two seperate .tiff files, one just tissue and the other just roi mask, to a pyramid .ome.tiff file that is 
+compatible with the DSP Atlas
 
 Accepts a `Post` request with a JSON body in the format:
 
