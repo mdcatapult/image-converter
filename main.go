@@ -132,9 +132,11 @@ func convertFile(request model.ConvertRequest) (HttpStatusCode int, e error) {
 	// file now needs converting from tiff to ome.tiff using bfconvert
 	// input will be the output tiff file from fiji, output the original output .ome.tiff
 	// example bfconvert command: bfconvert -overwrite  2106-bladder-tma-nimrad.tiff test.ome.tiff
-	stdOut, err = exec.Command(bfconvertAppPath, "-overwrite", fijiRequest.OutputFile, request.OutputFile).Output()
+	os.Setenv("BF_MAX_MEM", "4g")
+	cmd, err := exec.Command(bfconvertAppPath, "-overwrite", "-pyramid-resolutions", "6", "-pyramid-scale", "2", fijiRequest.OutputFile, request.OutputFile).CombinedOutput()
+
 	if err != nil {
-		return http.StatusInternalServerError, errors.New("error during bfconvert execution: " + string(stdOut))
+		return http.StatusInternalServerError, errors.New("error during bfconvert execution: " + string(cmd))
 	}
 
 	return http.StatusOK, nil

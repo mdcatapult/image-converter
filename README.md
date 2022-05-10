@@ -18,12 +18,55 @@ The macro steps are as follows:
 6) Convert to 16 bit, to be compatible with minerva
 7) Save
 
-Finally, another tool, `bfconvert` is used to convert from a .tiff to a .ome.tiff 
+Finally, another tool, `bfconvert` is used to convert from a flat .tiff to a pyramidal .ome.tiff 
 
+##To make a pyramid.
+bftools in version 6+ has been updated to allow the conversion of flat .tiff images to .ome.tiff pyramid images.
+
+-pyramid-resolutions: This configures how many individual layers the pyramid image file will have (how many tiers to the pyramid)
+
+-pyramid-scale: Defines the reduction in resolution per pyramid resolution
+
+eg -pyramid-resolutions 6 -pyramid-scale 2 of an original image of 10000x5000 pixels would be:
+
+1 - 10000x5000
+
+2 - 5000x2500
+
+3 - 2500x1250
+
+4 - 1250x625
+
+5 - 625x312
+
+6 - 312x156
+
+6 images in which the resolution scales down by a factor of two each time
+```
+Not to scale depiction of the above pyramid image.
+
+''''''''''''''''''''
+
+  ''''''''''''''''
+
+    ''''''''''''
+
+      ''''''''
+
+       '''''
+
+        '''
+        
+```
+```
+bftools/bfconvert -pyramid-resolutions 6 -pyramid-scale 2 pre-pyramid.tiff pyramid.ome.tiff
+```
+As default the pyramid-resolutions will be set to 6 tiers and the tiers will downscale each time by a factor of 2.
 ## Endpoints
 
 ### `/convert`
-Converts a .tiff file to an .ome.tiff file
+Converts two seperate .tiff files, one just tissue and the other just roi mask, to a pyramid .ome.tiff file that is 
+compatible with the DSP Atlas
 
 Accepts a `Post` request with a JSON body in the format:
 
