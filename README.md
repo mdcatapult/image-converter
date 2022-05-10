@@ -20,7 +20,7 @@ The macro steps are as follows:
 
 Finally, another tool, `bfconvert` is used to convert from a flat .tiff to a pyramidal .ome.tiff 
 
-##Too make a pyramid.
+##To make a pyramid.
 bftools in version 6+ has been updated to allow the conversion of flat .tiff images to .ome.tiff pyramid images.
 
 -pyramid-resolutions: This configures how many individual layers the pyramid image file will have (how many tiers to the pyramid)
