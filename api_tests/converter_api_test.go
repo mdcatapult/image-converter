@@ -1,28 +1,17 @@
-package main
+package apitest
 
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
-	"github.com/go-playground/assert/v2"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"testing"
+
+	"github.com/go-playground/assert/v2"
+	"gitlab.mdcatapult.io/informatics/software-engineering/mdc-minerva-image-converter/test_utils"
 )
 
-var convertUrl = fmt.Sprintf("http://%s/convert", getHostNameAndPort())
-
-// if running in CI, gets the hostname and port from an env var, else uses localhost and the port mapping defined
-// in the local docker-compose file
-func getHostNameAndPort() string {
-	hostnameAndPort := os.Getenv("HOSTNAME_FROM_CI")
-
-	if hostnameAndPort == "" {
-		return "localhost:8081"
-	}
-	return hostnameAndPort
-}
+var convertUrl = test_utils.GetUrl("/convert")
 
 func TestBadRequestInvalidJson(t *testing.T) {
 	values := map[string]string{"inpert-file": "scooby-dooby", "input-mask-file": "dee-dee", "output-file": "dooby-doo"}
@@ -86,9 +75,9 @@ func TestBadRequestIncorrectOutputFileFormat(t *testing.T) {
 
 func TestBadRequestNonExistentFile(t *testing.T) {
 	values := map[string]string{
-		"input-file":  "/opt/data/2106xx_Bladder_TMA_NIMRAD-croppyyyy.tiff",
+		"input-file":      "/opt/data/2106xx_Bladder_TMA_NIMRAD-croppyyyy.tiff",
 		"input-mask-file": "/opt/data/2106xx_Bladder_TMA_NIMRAD-crop.tiff",
-		"output-file": "/opt/data/converted_file_test.ome.tiff",
+		"output-file":     "/opt/data/converted_file_test.ome.tiff",
 	}
 
 	jsonValue, _ := json.Marshal(values)
@@ -107,9 +96,9 @@ func TestBadRequestNonExistentFile(t *testing.T) {
 func TestFileIsConverted(t *testing.T) {
 
 	values := map[string]string{
-		"input-file":  "/opt/data/2106xx_Bladder_TMA_NIMRAD-crop.tiff",
-		"input-mask-file":  "/opt/data/2106xx_Bladder_TMA_NIMRAD-crop-mask.tiff",
-		"output-file": "/opt/data/converted_file_test.ome.tiff",
+		"input-file":      "/opt/data/2106xx_Bladder_TMA_NIMRAD-crop.tiff",
+		"input-mask-file": "/opt/data/2106xx_Bladder_TMA_NIMRAD-crop-mask.tiff",
+		"output-file":     "/opt/data/converted_file_test.ome.tiff",
 	}
 
 	jsonValue, _ := json.Marshal(values)

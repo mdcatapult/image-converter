@@ -6,11 +6,12 @@ COPY go.mod ./
 COPY go.sum ./
 COPY model ./model
 COPY utils ./utils
+COPY converter ./converter
+COPY cropper ./cropper
 COPY *.go ./
 
 RUN go mod tidy
 RUN go build -o /mdc-minerva-image-converter
-
 
 FROM fiji/fiji:fiji-openjdk-8 as fiji
 USER root
@@ -28,5 +29,9 @@ RUN mkdir /opt/data /opt/temp
 COPY --from=builder /mdc-minerva-image-converter /app
 
 EXPOSE 8080
+
+ENV DSP_MNT_PATH=/opt/data
+ENV BF_TOOLS_CONVERT_PATH=/opt/bftools/bfconvert
+ENV BF_TOOLS_INFO_PATH=/opt/bftools/showinf
 
 ENTRYPOINT ["/app/mdc-minerva-image-converter"]

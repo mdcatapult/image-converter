@@ -2,11 +2,10 @@ version: "3.6"
 services:
   image-converter:
     volumes:
-      - "./test-images:/opt/data"
+      - "./alex-crop-image:/opt/data"
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - 8081:8080 # if the external port is changed, this must also match the port in main_test.go
-
 
