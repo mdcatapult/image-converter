@@ -46,8 +46,6 @@ func Crop(c *gin.Context) {
 	}
 
 	cropInstruction := fmt.Sprintf("%v,%v,%v,%v", startX, startY, cropSize, cropSize)
-
-	fmt.Println(cropInstruction, patternFilePath, outputPath)
 	cmd := exec.Command(os.Getenv("BF_TOOLS_CONVERT_PATH"), "-crop", cropInstruction, patternFilePath, outputPath)
 
 	if err := cmd.Run(); err != nil {
@@ -59,6 +57,10 @@ func Crop(c *gin.Context) {
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
+	}
+
+	if err := os.Remove(outputPath); err != nil {
+		fmt.Println("error cleaning up file:", err)
 	}
 
 	c.Data(http.StatusOK, "application/octet-stream", croppedImageBytes)

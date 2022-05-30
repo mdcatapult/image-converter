@@ -82,7 +82,7 @@ Accepts a `Post` request with a JSON body in the format:
 `opt/data` is required as this is specified as the mount point in `image-converter.yml`
 
 ### `/crop`
-Crops a .tiff image using bf tools to a given size using specified x and y coords as the center.
+Crops a .tiff image using `bftools` to a given size using specified x and y coords as the center.
 
 Accepts a `Get` request with the following mandatory params:
 
