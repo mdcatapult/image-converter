@@ -62,6 +62,13 @@ Not to scale depiction of the above pyramid image.
 bftools/bfconvert -pyramid-resolutions 6 -pyramid-scale 2 pre-pyramid.tiff pyramid.ome.tiff
 ```
 As default the pyramid-resolutions will be set to 6 tiers and the tiers will downscale each time by a factor of 2.
+
+## Deployed Service URL
+
+https://minerva-image-converter.wopr.inf.mdc
+
+In Rancher the deployment is under the `R&D` project in the `minerva` namespace.
+
 ## Endpoints
 
 ### `/convert`
