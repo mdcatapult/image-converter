@@ -3,12 +3,13 @@ package utils
 import (
 	"bytes"
 	"errors"
-	"gitlab.mdcatapult.io/informatics/software-engineering/mdc-minerva-image-converter/model"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
+
+	"gitlab.mdcatapult.io/informatics/software-engineering/mdc-minerva-image-converter/src/model"
 )
 
 // create a temporary macro file to use with fiji, return the temp filename if successful
@@ -34,11 +35,11 @@ func CreateTempMacroFile(request model.ConvertRequest, tempDir string) (*os.File
 func createFijiMacroString(request model.ConvertRequest) (string, error) {
 
 	requestInputFilenames := model.ConvertRequestForFijiMacro{
-		InputFile:     request.InputFile,
-		InputFilename: filepath.Base(request.InputFile),
-		InputMaskFile: request.InputMaskFile,
+		InputFile:         request.InputFile,
+		InputFilename:     filepath.Base(request.InputFile),
+		InputMaskFile:     request.InputMaskFile,
 		InputMaskFilename: filepath.Base(request.InputMaskFile),
-		OutputFile: request.OutputFile,
+		OutputFile:        request.OutputFile,
 	}
 
 	templateString :=

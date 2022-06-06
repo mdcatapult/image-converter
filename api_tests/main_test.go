@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"gitlab.mdcatapult.io/informatics/software-engineering/mdc-minerva-image-converter/server"
+	"gitlab.mdcatapult.io/informatics/software-engineering/mdc-minerva-image-converter/src/server"
 )
 
 func TestMain(m *testing.M) {

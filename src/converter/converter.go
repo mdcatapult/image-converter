@@ -10,8 +10,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"gitlab.mdcatapult.io/informatics/software-engineering/mdc-minerva-image-converter/model"
-	"gitlab.mdcatapult.io/informatics/software-engineering/mdc-minerva-image-converter/utils"
+	"gitlab.mdcatapult.io/informatics/software-engineering/mdc-minerva-image-converter/src/model"
+	"gitlab.mdcatapult.io/informatics/software-engineering/mdc-minerva-image-converter/src/utils"
 )
 
 const (

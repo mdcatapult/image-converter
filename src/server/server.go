@@ -3,8 +3,8 @@ package server
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"gitlab.mdcatapult.io/informatics/software-engineering/mdc-minerva-image-converter/converter"
-	"gitlab.mdcatapult.io/informatics/software-engineering/mdc-minerva-image-converter/cropper"
+	"gitlab.mdcatapult.io/informatics/software-engineering/mdc-minerva-image-converter/src/converter"
+	"gitlab.mdcatapult.io/informatics/software-engineering/mdc-minerva-image-converter/src/cropper"
 )
 
 func Start(port string) error {

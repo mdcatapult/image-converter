@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/go-playground/assert/v2"
-	"gitlab.mdcatapult.io/informatics/software-engineering/mdc-minerva-image-converter/cropper"
+	"gitlab.mdcatapult.io/informatics/software-engineering/mdc-minerva-image-converter/src/cropper"
 	"gitlab.mdcatapult.io/informatics/software-engineering/mdc-minerva-image-converter/test_utils"
 )
 

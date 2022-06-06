@@ -4,11 +4,7 @@ WORKDIR /app
 
 COPY go.mod ./
 COPY go.sum ./
-COPY model ./model
-COPY utils ./utils
-COPY converter ./converter
-COPY cropper ./cropper
-COPY server ./server
+COPY src ./src
 COPY *.go ./
 
 
