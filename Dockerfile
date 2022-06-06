@@ -8,10 +8,10 @@ COPY model ./model
 COPY utils ./utils
 COPY converter ./converter
 COPY cropper ./cropper
+COPY server ./server
 COPY *.go ./
 
 
-# RUN git config --global --add url."git@git.mdcatapult.io/".insteadOf "https://gitlab.mdcatapult.io/"
 RUN go mod tidy
 RUN go build -o /mdc-minerva-image-converter
 
