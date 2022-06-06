@@ -1,6 +1,7 @@
 package cropper
 
 import (
+	"bufio"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -30,6 +31,7 @@ const (
 func Crop(c *gin.Context) {
 
 	x, y, experimentDir, cropSize, err := getParams(c)
+
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
 		return
@@ -48,9 +50,16 @@ func Crop(c *gin.Context) {
 	cropInstruction := fmt.Sprintf("%v,%v,%v,%v", startX, startY, cropSize, cropSize)
 	cmd := exec.Command(os.Getenv("BF_TOOLS_CONVERT_PATH"), "-crop", cropInstruction, patternFilePath, outputPath)
 
-	if err := cmd.Run(); err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+	// fmt.Println(cmd.String())
+	stderr, _ := cmd.StderrPipe()
+	if err := cmd.Start(); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, errors.Wrap(err, fmt.Sprintf("crop instruction was %s", cropInstruction)))
 		return
+	}
+
+	scanner := bufio.NewScanner(stderr)
+	for scanner.Scan() {
+		fmt.Println(scanner.Text())
 	}
 
 	croppedImageBytes, err := ioutil.ReadFile(outputPath)
@@ -66,14 +75,14 @@ func Crop(c *gin.Context) {
 	c.Data(http.StatusOK, "application/octet-stream", croppedImageBytes)
 }
 
-func getParams(c *gin.Context) (x, y float64, experimentDir string, cropSize float64, err error) {
+func getParams(c *gin.Context) (x, y int64, experimentDir string, cropSize int64, err error) {
 
 	xParam, ok := c.GetQuery("x")
 	if !ok {
 		return 0, 0, "", 0, errors.New(ErrMissingXParam)
 	}
 
-	x, err = strconv.ParseFloat(xParam, 64)
+	x, err = strconv.ParseInt(xParam, 10, 64)
 	if err != nil {
 		return 0, 0, "", 0, errors.New(ErrXParamType)
 	}
@@ -83,7 +92,7 @@ func getParams(c *gin.Context) (x, y float64, experimentDir string, cropSize flo
 		return 0, 0, "", 0, errors.New(ErrMissingYParam)
 	}
 
-	y, err = strconv.ParseFloat(yParam, 64)
+	y, err = strconv.ParseInt(yParam, 10, 64)
 	if err != nil {
 		return 0, 0, "", 0, errors.New(ErrYParamType)
 	}
@@ -98,7 +107,7 @@ func getParams(c *gin.Context) (x, y float64, experimentDir string, cropSize flo
 		return 0, 0, "", 0, errors.New(ErrMissingCropSizeParam)
 	}
 
-	cropSize, err = strconv.ParseFloat(cropSizeParam, 64)
+	cropSize, err = strconv.ParseInt(cropSizeParam, 10, 64)
 	if err != nil {
 		return 0, 0, "", 0, errors.New(ErrCropSizeParamType)
 	}
@@ -106,17 +115,16 @@ func getParams(c *gin.Context) (x, y float64, experimentDir string, cropSize flo
 }
 
 func getPaths(experimentDir string) (patternFilePath, outputPath string) {
-	dspMountPath := os.Getenv("DSP_MNT_PATH")
 
-	patternFilePath = fmt.Sprintf("%v/%v/channels.pattern", dspMountPath, experimentDir)
+	patternFilePath = fmt.Sprintf("%v/raw-image/channels.pattern", experimentDir)
 
-	outputPath = fmt.Sprintf("%v/%v/%v", dspMountPath, experimentDir, GetCroppedImageName(experimentDir))
+	outputPath = GetCroppedImageName(experimentDir)
 
 	return
 }
 
 func GetCroppedImageName(experimentDir string) string {
-	return experimentDir + "-cropped.tiff"
+	return experimentDir + "-cropped.png"
 }
 
 func readImageMetadata(patternFilePath string) (string, error) {
@@ -125,7 +133,7 @@ func readImageMetadata(patternFilePath string) (string, error) {
 	return string(out), errors.Wrap(err, "Couldn't read info about the raw image to validate coordinates!")
 }
 
-func validateCoords(x, y, croppedImageSize float64, patternFilePath string, imageMetadataReader func(string) (string, error)) error {
+func validateCoords(x, y, croppedImageSize int64, patternFilePath string, imageMetadataReader func(string) (string, error)) error {
 
 	if x < 0 || y < 0 {
 		return errors.New(ErrOutOfBounds)
@@ -141,11 +149,11 @@ func validateCoords(x, y, croppedImageSize float64, patternFilePath string, imag
 
 	heightSplit := strings.Split(rawImgData, "Height = ")
 	heightStr := strings.Split(heightSplit[1], "\n")[0]
-	rawImageHeight, _ := strconv.ParseFloat(heightStr, 64)
+	rawImageHeight, _ := strconv.ParseInt(heightStr, 10, 64)
 
 	widthSplit := strings.Split(rawImgData, "Width = ")
 	widthStr := strings.Split(widthSplit[1], "\n")[0]
-	rawImageWidth, _ := strconv.ParseFloat(widthStr, 64)
+	rawImageWidth, _ := strconv.ParseInt(widthStr, 10, 64)
 
 	if x+croppedImageSize > rawImageWidth || y+croppedImageSize > rawImageHeight {
 		return errors.New(ErrOutOfBounds)

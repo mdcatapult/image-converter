@@ -34,6 +34,7 @@ lint:
     - wopr
   image: registry.mdcatapult.io/informatics/docker-images/ci/golang
   script:
+    - go mod tidy
     - go vet ./...
     - golangci-lint run
   except:
