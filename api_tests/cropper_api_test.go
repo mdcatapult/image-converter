@@ -85,7 +85,7 @@ func getResponseError(resp *http.Response) string {
 	var responseWithError struct {
 		Error string `json:"error"`
 	}
-	json.Unmarshal(bytes, &responseWithError)
+	_ = json.Unmarshal(bytes, &responseWithError)
 
 	return responseWithError.Error
 

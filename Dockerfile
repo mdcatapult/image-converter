@@ -7,7 +7,6 @@ COPY go.sum ./
 COPY src ./src
 COPY *.go ./
 
-
 RUN go mod tidy
 RUN go build -o /mdc-minerva-image-converter
 
@@ -28,7 +27,6 @@ COPY --from=builder /mdc-minerva-image-converter /app
 
 EXPOSE 8080
 
-ENV DSP_MNT_PATH=/opt/data
 ENV BF_TOOLS_CONVERT_PATH=/opt/bftools/bfconvert
 ENV BF_TOOLS_INFO_PATH=/opt/bftools/showinf
 

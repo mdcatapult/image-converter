@@ -2,7 +2,6 @@ package cropper
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"os/exec"
@@ -48,14 +47,9 @@ func Crop(c *gin.Context) {
 
 	cropInstruction := fmt.Sprintf("%v,%v,%v,%v", startX, startY, cropSize, cropSize)
 
-	if err := cropper.Crop(cropInstruction, patternFilePath, outputPath); err != nil {
-		c.AbortWithError(http.StatusInternalServerError, errors.Wrap(err, fmt.Sprintf("crop instruction was %s", cropInstruction)))
-		return
-	}
-
-	croppedImageBytes, err := ioutil.ReadFile(outputPath)
+	croppedImageBytes, err := cropper.Crop(cropInstruction, patternFilePath, outputPath)
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+		_ = c.AbortWithError(http.StatusInternalServerError, errors.Wrap(err, fmt.Sprintf("crop instruction was %s", cropInstruction)))
 		return
 	}
 

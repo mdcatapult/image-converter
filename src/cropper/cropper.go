@@ -3,6 +3,7 @@ package cropper
 import (
 	"bufio"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 )
@@ -14,17 +15,18 @@ func SetCropper(c Cropper) {
 }
 
 type Cropper interface {
-	Crop(cropInstruction, patternFilePath, outputPath string) error
+	Crop(cropInstruction, patternFilePath, outputPath string) (croppedImageBytes []byte, err error)
 }
 
 type ImplementedCropper struct{}
 
-func (c ImplementedCropper) Crop(cropInstruction, patternFilePath, outputPath string) error {
+func (c ImplementedCropper) Crop(cropInstruction, patternFilePath, outputPath string) ([]byte, error) {
+
 	cmd := exec.Command(os.Getenv("BF_TOOLS_CONVERT_PATH"), "-crop", cropInstruction, patternFilePath, outputPath)
 
 	stderr, _ := cmd.StderrPipe()
 	if err := cmd.Start(); err != nil {
-		return err
+		return nil, err
 	}
 
 	scanner := bufio.NewScanner(stderr)
@@ -32,5 +34,5 @@ func (c ImplementedCropper) Crop(cropInstruction, patternFilePath, outputPath st
 		fmt.Println(scanner.Text())
 	}
 
-	return nil
+	return ioutil.ReadFile(outputPath)
 }

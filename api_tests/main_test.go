@@ -1,6 +1,7 @@
 package apitest
 
 import (
+	"log"
 	"os"
 	"testing"
 
@@ -11,27 +12,16 @@ import (
 func TestMain(m *testing.M) {
 	cropper.SetCropper(mockCropper{})
 	go func() {
-		server.Start(":8081")
+		if err := server.Start(":8081"); err != nil {
+			log.Fatal(err)
+		}
 	}()
 	os.Exit(m.Run())
 }
 
 type mockCropper struct{}
 
-func (mc mockCropper) Crop(cropInstruction, patternFilePath, outputPath string) error {
-	f, err := os.Create(outputPath)
-
-	if err != nil {
-		return err
-	}
-
-	defer f.Close()
-
-	_, err2 := f.WriteString("some image data")
-
-	if err2 != nil {
-		return err
-	}
-
-	return nil
+func (mc mockCropper) Crop(cropInstruction, patternFilePath, outputPath string) ([]byte, error) {
+	bytes := []byte("some image data")
+	return bytes, nil
 }
