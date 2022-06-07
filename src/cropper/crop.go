@@ -1,7 +1,6 @@
 package cropper
 
 import (
-	"bufio"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -48,18 +47,10 @@ func Crop(c *gin.Context) {
 	}
 
 	cropInstruction := fmt.Sprintf("%v,%v,%v,%v", startX, startY, cropSize, cropSize)
-	cmd := exec.Command(os.Getenv("BF_TOOLS_CONVERT_PATH"), "-crop", cropInstruction, patternFilePath, outputPath)
 
-	// fmt.Println(cmd.String())
-	stderr, _ := cmd.StderrPipe()
-	if err := cmd.Start(); err != nil {
+	if err := cropper.Crop(cropInstruction, patternFilePath, outputPath); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, errors.Wrap(err, fmt.Sprintf("crop instruction was %s", cropInstruction)))
 		return
-	}
-
-	scanner := bufio.NewScanner(stderr)
-	for scanner.Scan() {
-		fmt.Println(scanner.Text())
 	}
 
 	croppedImageBytes, err := ioutil.ReadFile(outputPath)
@@ -124,7 +115,7 @@ func getPaths(experimentDir string) (patternFilePath, outputPath string) {
 }
 
 func GetCroppedImageName(experimentDir string) string {
-	return experimentDir + "-cropped.png"
+	return experimentDir + "-cropped.tiff"
 }
 
 func readImageMetadata(patternFilePath string) (string, error) {

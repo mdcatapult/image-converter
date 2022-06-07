@@ -13,7 +13,7 @@ import (
 	"gitlab.mdcatapult.io/informatics/software-engineering/mdc-minerva-image-converter/test_utils"
 )
 
-var cropUrl = test_utils.URL{test_utils.GetUrl("/crop")}
+var cropUrl = test_utils.URL{Url: test_utils.GetUrl("/crop")}
 
 func TestBadRequestMissingX(t *testing.T) {
 
