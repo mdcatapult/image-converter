@@ -96,9 +96,9 @@ func TestBadRequestNonExistentFile(t *testing.T) {
 func TestFileIsConverted(t *testing.T) {
 
 	values := map[string]string{
-		"input-file":      "/opt/data/2106xx_Bladder_TMA_NIMRAD-crop.tiff",
-		"input-mask-file": "/opt/data/2106xx_Bladder_TMA_NIMRAD-crop-mask.tiff",
-		"output-file":     "/opt/data/converted_file_test.ome.tiff",
+		"input-file":      "test-images/raw-image/2106xx_Bladder_TMA_NIMRAD-crop.tiff",
+		"input-mask-file": "test-images/raw-image/2106xx_Bladder_TMA_NIMRAD-crop-mask.tiff",
+		"output-file":     "test-images/raw-image/converted_file_test.ome.tiff",
 	}
 
 	jsonValue, _ := json.Marshal(values)
@@ -112,9 +112,7 @@ func TestFileIsConverted(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t,
-		"{\"status\":\"conversion from: /opt/data/2106xx_Bladder_TMA_NIMRAD-crop.tiff to: /opt/data/converted_file_test.ome.tiff complete\"}",
+		"{\"status\":\"conversion from: test-images/raw-image/2106xx_Bladder_TMA_NIMRAD-crop.tiff to: test-images/raw-image/converted_file_test.ome.tiff complete\"}",
 		responseBody,
 	)
 }
-
-// TODO maybe test the hash of the file?

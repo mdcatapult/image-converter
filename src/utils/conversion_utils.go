@@ -3,7 +3,7 @@ package utils
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,7 +14,14 @@ import (
 
 // create a temporary macro file to use with fiji, return the temp filename if successful
 func CreateTempMacroFile(request model.ConvertRequest, tempDir string) (*os.File, error) {
-	tempMacroFile, err := ioutil.TempFile(tempDir, "macro*.ijm")
+
+	err := os.MkdirAll(tempDir, os.ModeTemporary)
+	if err != nil {
+		return nil, errors.New("error creating temp file in directory: " + tempDir)
+	}
+
+	tmpFilePath := fmt.Sprintf("%s/macro.ijm", tempDir)
+	tempMacroFile, err := os.Create(tmpFilePath)
 	if err != nil {
 		return nil, errors.New("error creating temp file in directory: " + tempDir)
 	}
