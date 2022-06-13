@@ -4,29 +4,14 @@ stages:
   - release
   - publish
 
-# must be run on the default runner (wopr tag omitted) to use docker in docker
 test-web-service:
-  services:
-    - docker:dind
   stage: test
-  image: tiangolo/docker-with-compose:2021-09-17
-  before_script:
-    - docker-compose -f docker-compose-ci.yaml up -d
-    - apk update && apk add curl
-    - apk add build-base
-    - mkdir -p $HOME/golang
-    - mkdir -p $HOME/gopath
-    - curl http://storage.googleapis.com/golang/go1.16.9.linux-amd64.tar.gz 2>/dev/null > go1.16.9.linux-amd64.tar.gz
-    - tar -C $HOME/golang -xzf go1.16.9.linux-amd64.tar.gz
-    - export GOROOT=$HOME/golang/go
-    - export GOPATH=$HOME/gopath
-    - export PATH=$PATH:$GOROOT/bin
-    - export PATH=$PATH:$GOPATH/bin
+  tags:
+    - wopr
+  image: registry.mdcatapult.io/informatics/docker-images/ci/golang
   script:
-    - export HOSTNAME_FROM_CI=docker:8080
-    - go test ./... -coverpkg=./... -coverprofile=cover.out
-  after_script:
-    - docker-compose -f docker-compose-ci.yaml down
+    - go test -v ./... -coverpkg=./... -coverprofile=cover.out
+
 
 lint:
   stage: test
@@ -34,6 +19,7 @@ lint:
     - wopr
   image: registry.mdcatapult.io/informatics/docker-images/ci/golang
   script:
+    - go mod tidy
     - go vet ./...
     - golangci-lint run
   except:

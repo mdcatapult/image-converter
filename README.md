@@ -1,6 +1,6 @@
 # MDC-Minerva-Image-Converter
 
-Webservice to trigger conversion of images to a valid format for the Minerva UI.
+Webservice to trigger conversion or cropping of images to a valid format for the Minerva UI.
 
 Currently, a valid image comprises of 6 channels, 3 of which are used by the main 'base' image, with the other 3 being used by the ROI mask image.
 
@@ -87,6 +87,22 @@ Accepts a `Post` request with a JSON body in the format:
 ```
 
 `opt/data` is required as this is specified as the mount point in `image-converter.yml`
+
+### `/crop`
+Crops a .tiff image using `bftools` to a given size using specified x and y coords as the center.
+
+Accepts a `Get` request with the following mandatory params:
+
+- x = the x-coordinate to use as the centre of the cropped image. 
+- y = the y-coordinate to use as the centre of the cropped image.
+- crop-size = the size in pixels to crop the image to.
+- experiment-directory = the filepath containing the original raw image, and a channels.pattern file for `bftools` to use to find the image channels.
+
+Returns the cropped image as bytes.
+
+Troubleshooting:
+
+- Out of bounds error: the requested crop falls of the edge of the raw image. x cannot be less than `(cropSize/2)`, and cannot be greater than `({rawImageWidth}-cropSize)`. y is the same but for the height of the raw image rather than its width.
 
 ## Testing
 

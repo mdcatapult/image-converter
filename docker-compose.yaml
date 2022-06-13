@@ -2,11 +2,21 @@ version: "3.6"
 services:
   image-converter:
     volumes:
-      - "./test-images:/opt/data"
+    - type: volume
+      source: vast
+      target: /opt/data-volume
+      volume:
+        nocopy: true
+
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - 8081:8080 # if the external port is changed, this must also match the port in main_test.go
 
-
+volumes:
+  vast:
+    driver_opts:
+      type: "nfs"
+      o: "addr=mdc-vast-nfs.medcat.local,nolock,soft,rw"
+      device: ":/softwareengineering/scratch/dsp/"

@@ -3,17 +3,25 @@ package utils
 import (
 	"bytes"
 	"errors"
-	"gitlab.mdcatapult.io/informatics/software-engineering/mdc-minerva-image-converter/model"
-	"io/ioutil"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
+
+	"gitlab.mdcatapult.io/informatics/software-engineering/mdc-minerva-image-converter/src/model"
 )
 
 // create a temporary macro file to use with fiji, return the temp filename if successful
 func CreateTempMacroFile(request model.ConvertRequest, tempDir string) (*os.File, error) {
-	tempMacroFile, err := ioutil.TempFile(tempDir, "macro*.ijm")
+
+	err := os.MkdirAll(tempDir, os.ModeTemporary)
+	if err != nil {
+		return nil, errors.New("error creating temp file in directory: " + tempDir)
+	}
+
+	tmpFilePath := fmt.Sprintf("%s/macro.ijm", tempDir)
+	tempMacroFile, err := os.Create(tmpFilePath)
 	if err != nil {
 		return nil, errors.New("error creating temp file in directory: " + tempDir)
 	}
@@ -34,11 +42,11 @@ func CreateTempMacroFile(request model.ConvertRequest, tempDir string) (*os.File
 func createFijiMacroString(request model.ConvertRequest) (string, error) {
 
 	requestInputFilenames := model.ConvertRequestForFijiMacro{
-		InputFile:     request.InputFile,
-		InputFilename: filepath.Base(request.InputFile),
-		InputMaskFile: request.InputMaskFile,
+		InputFile:         request.InputFile,
+		InputFilename:     filepath.Base(request.InputFile),
+		InputMaskFile:     request.InputMaskFile,
 		InputMaskFilename: filepath.Base(request.InputMaskFile),
-		OutputFile: request.OutputFile,
+		OutputFile:        request.OutputFile,
 	}
 
 	templateString :=

@@ -1,11 +1,12 @@
 package utils
 
 import (
-	"github.com/go-playground/assert/v2"
-	"gitlab.mdcatapult.io/informatics/software-engineering/mdc-minerva-image-converter/model"
 	"io/ioutil"
 	"os"
 	"testing"
+
+	"github.com/go-playground/assert/v2"
+	"gitlab.mdcatapult.io/informatics/software-engineering/mdc-minerva-image-converter/src/model"
 )
 
 func TestMain(m *testing.M) {
@@ -36,9 +37,9 @@ func TestMain(m *testing.M) {
 func TestMacroFileIsCorrect(t *testing.T) {
 
 	request := model.ConvertRequest{
-		InputFile:  "some-input-directory/test.tiff",
+		InputFile:     "some-input-directory/test.tiff",
 		InputMaskFile: "some-input-directory/test-mask.tiff",
-		OutputFile: "some-output-directory/test.ome.tiff",
+		OutputFile:    "some-output-directory/test.ome.tiff",
 	}
 
 	workingDir, err := os.Getwd()
