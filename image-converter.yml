@@ -22,7 +22,7 @@ spec:
               name: 8080tcp2
               protocol: TCP
           volumeMounts:
-            - mountPath: /opt/data
+            - mountPath: /opt/data-volume
               name: data
       imagePullSecrets:
         - name: gitlab-registry
