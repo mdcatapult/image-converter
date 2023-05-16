@@ -69,6 +69,10 @@ https://minerva-image-converter.wopr.inf.mdc
 
 In Rancher the deployment is under the `R&D` project in the `minerva` namespace.
 
+## Kubernetes Deployment
+
+The relevant `.yaml` files can be found in the [dedicated k8s deployments yaml repo](https://gitlab.mdcatapult.io/devops/kubernetes-deployments-yaml)
+
 ## Endpoints
 
 ### `/convert`
