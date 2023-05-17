@@ -1,4 +1,4 @@
-# MDC-Minerva-Image-Converter
+# DSP Atlas Image Conversion API
 
 Webservice to trigger conversion or cropping of images to a valid format for the Minerva UI.
 
