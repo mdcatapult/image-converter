@@ -1,6 +1,6 @@
 # DSP Atlas Image Conversion API
 
-Webservice to trigger conversion or cropping of images to a valid format for the Minerva UI.
+Webservice to trigger conversion or cropping of images to a valid format for the DSP Atlas UI.
 
 Currently, a valid image comprises of 6 channels, 3 of which are used by the main 'base' image, with the other 3 being used by the ROI mask image.
 
@@ -20,7 +20,16 @@ The macro steps are as follows:
 
 Finally, another tool, `bfconvert` is used to convert from a flat .tiff to a pyramidal .ome.tiff 
 
-##To make a pyramid.
+## Pyramid images and why?
+
+Pyramid images - https://en.wikipedia.org/wiki/Pyramid_(image_processing)
+
+Pyramid images allow very large images to be viewed in a highly efficient way when using an image viewer such as OpenSeadragon. 
+This is because initially a 'zoomed out' low resolution image is loaded; when the user zooms into an area of interest the
+more detailed zoomed in image will render for just that small area of interest. This means that only small areas of high 
+resolution images are being rendered simultaneously.
+
+## To make a pyramid.
 bftools in version 6+ has been updated to allow the conversion of flat .tiff images to .ome.tiff pyramid images.
 
 -pyramid-resolutions: This configures how many individual layers the pyramid image file will have (how many tiers to the pyramid)
@@ -124,3 +133,9 @@ When running in CI, a custom docker image with docker compose is used as the bas
 The file `docker-compose-ci.yaml` is then used to build and run this project's dockerfile.
 
 This specifies to use the `host` network, which is needed to allow the tests to send requests to the running container.
+
+## Future Work
+
+Future work is needed to enable the handling of input images with different numbers of channels. At present the only accepted
+format is a base image with 3 channels, and a mask image also with 3 channels. This needs to be more flexible as we are aware
+that certain images on the GeoMx machine contain 4 channels which a user will want to toggle between.
