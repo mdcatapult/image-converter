@@ -2,7 +2,6 @@ package cropper
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"os/exec"
@@ -104,11 +103,11 @@ func getPaths(experimentDir string) (patternFilePath, outputPath string) {
 
 	dataMountPath := os.Getenv("DSP_ATLAS_DATA")
 
-	log.Print(dataMountPath)
+	println(dataMountPath)
 
 	patternFilePath = fmt.Sprintf("%v/%v/raw-image/channels.pattern", dataMountPath, experimentDir)
 
-	log.Print(patternFilePath)
+	println(patternFilePath)
 
 	outputPath = GetCroppedImageName(experimentDir)
 
