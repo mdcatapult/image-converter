@@ -4,19 +4,20 @@ services:
     volumes:
     - type: volume
       source: vast
-      target: /opt/data-volume
+      target: ${DSP_ATLAS_DATA}
       volume:
         nocopy: true
-
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "8081:8080" # if the external port is changed, this must also match the port in main_test.go
+    environment:
+      DSP_ATLAS_DATA: ${DSP_ATLAS_DATA}
 
 volumes:
   vast:
     driver_opts:
       type: "nfs"
       o: "addr=mdc-vast-nfs.medcat.local,nolock,soft,rw"
-      device: ":/softwareengineering/scratch/dsp-dev/"
+      device: ":${DSP_ATLAS_DATA_SOURCE}"

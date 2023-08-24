@@ -2,3 +2,4 @@
 .idea
 mdc-minerva-image-converter
 test-images/converted_file_test.ome.tiff
+.env
