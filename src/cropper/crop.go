@@ -103,11 +103,13 @@ func getPaths(experimentDir string) (patternFilePath, outputPath string) {
 
 	dataMountPath := os.Getenv("DSP_ATLAS_DATA")
 
-	fmt.Sprintf("data mount path is #{dataMountPath}")
+	amIHere := fmt.Sprintf("data mount path is #{dataMountPath}")
+	println(amIHere)
 
 	patternFilePath = fmt.Sprintf("%v/%v/raw-image/channels.pattern", dataMountPath, experimentDir)
 
-	fmt.Sprintf("pattern file path is #{patternFilePath}")
+	amIHere2 := fmt.Sprintf("pattern file path is #{patternFilePath}")
+	println(amIHere2)
 
 	outputPath = GetCroppedImageName(experimentDir)
 
