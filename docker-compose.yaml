@@ -11,7 +11,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8081:8081" # if the external port is changed, this must also match the port in main_test.go
+      - "8081:8080" # if the external port is changed, this must also match the port in main_test.go
     environment:
       DSP_ATLAS_DATA: ${DSP_ATLAS_DATA}
 

@@ -8,7 +8,7 @@ import (
 func main() {
 
 	cropper.SetCropper(cropper.ImplementedCropper{})
-	if err := server.Start(":8081"); err != nil {
+	if err := server.Start(":8080"); err != nil {
 		panic(err)
 	}
 }
