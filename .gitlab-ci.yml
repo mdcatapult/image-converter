@@ -29,6 +29,8 @@ lint:
 
 publish:
   stage: publish
+  tags:
+    - wopr
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [ "" ]
@@ -44,6 +46,8 @@ publish:
 
 release:
   stage: release
+  tags:
+    - wopr
   image: registry.mdcatapult.io/informatics/docker-images/ci/golang
   script:
     - release.sh -b -r develop
@@ -55,6 +59,8 @@ release:
 
 publish-master:
   stage: publish
+  tags:
+    - wopr
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [ "" ]
