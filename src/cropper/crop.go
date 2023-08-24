@@ -102,13 +102,7 @@ func getParams(c *gin.Context) (x, y int64, experimentDir string, cropSize int64
 func getPaths(experimentDir string) (patternFilePath, outputPath string) {
 
 	dataMountPath := os.Getenv("DSP_ATLAS_DATA")
-
-	println(dataMountPath)
-
 	patternFilePath = fmt.Sprintf("%v/%v/raw-image/channels.pattern", dataMountPath, experimentDir)
-
-	println(patternFilePath)
-
 	outputPath = GetCroppedImageName(experimentDir)
 
 	return
