@@ -82,6 +82,10 @@ In Rancher the deployment is under the `R&D` project in the `minerva` namespace.
 
 The relevant `.yaml` files can be found in the [dedicated k8s deployments yaml repo](https://gitlab.mdcatapult.io/devops/kubernetes-deployments-yaml)
 
+## Running locally with Docker
+
+Create a `.env` file and copy the contents of the `.env_example` into it, then run `docker-compose up --build`.
+
 ## Endpoints
 
 ### `/convert`
