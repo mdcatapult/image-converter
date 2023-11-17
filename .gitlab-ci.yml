@@ -6,18 +6,14 @@ stages:
 
 test-web-service:
   stage: test
-  tags:
-    - wopr
-  image: registry.mdcatapult.io/informatics/docker-images/ci/golang
+  image: registry.gitlab.com/medicines-discovery-catapult/informatics/docker-images/ci/golang:latest
   script:
     - go test -v ./... -coverpkg=./... -coverprofile=cover.out
 
 
 lint:
   stage: test
-  tags:
-    - wopr
-  image: registry.mdcatapult.io/informatics/docker-images/ci/golang
+  image: registry.gitlab.com/medicines-discovery-catapult/informatics/docker-images/ci/golang:latest
   script:
     - go mod tidy
     - go vet ./...
@@ -29,8 +25,6 @@ lint:
 
 publish:
   stage: publish
-  tags:
-    - wopr
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [ "" ]
@@ -46,28 +40,24 @@ publish:
 
 release:
   stage: release
-  tags:
-    - wopr
-  image: registry.mdcatapult.io/informatics/docker-images/ci/golang
+  image: registry.gitlab.com/medicines-discovery-catapult/informatics/docker-images/ci/golang:latest
   script:
-    - release.sh -b -r develop
+    - cictl exec release
   only:
-    - master
+    - main
   except:
     variables:
       - $CI_COMMIT_MESSAGE =~ /^Setting version to.*/
 
 publish-master:
   stage: publish
-  tags:
-    - wopr
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [ "" ]
   before_script:
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
   script:
-    - /kaniko/executor --context $CI_PROJECT_DIR --build-arg VERSION_HASH=$CI_COMMIT_SHORT_SHA --destination $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME --destination $CI_REGISTRY_IMAGE
+    - /kaniko/executor --context $CI_PROJECT_DIR --build-arg VERSION_HASH=$CI_COMMIT_SHORT_SHA --destination $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME --destination $CI_REGISTRY_IMAGE:latest
   only:
     refs:
       - tags
