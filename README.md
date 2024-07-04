@@ -143,3 +143,6 @@ This specifies to use the `host` network, which is needed to allow the tests to 
 Future work is needed to enable the handling of input images with different numbers of channels. At present the only accepted
 format is a base image with 3 channels, and a mask image also with 3 channels. This needs to be more flexible as we are aware
 that certain images on the GeoMx machine contain 4 channels which a user will want to toggle between.
+
+## License
+This project is licensed under the terms of the Apache 2 license, which can be found in the repository as `LICENSE.txt`
